@@ -1,28 +1,29 @@
 pipeline {
-    agent any
-
-    stages {
-        
-        stage('Validate') {
-            steps {
-                sh 'mvn validate'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'mvn package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
-
-    }
+environment {
+registry = "YourDockerhubAccount/YourRepository"
+registryCredential = 'docker-hub'
+dockerImage = ''
+}
+agent any
+stages {
+stage('Cloning our Git') {
+steps {
+git 'https://github.com/Arunsai14/project-1.git'
+}
+}
+stage('Building our image') {
+steps{
+script {
+dockerImage = docker.build registry + ":$BUILD_NUMBER"
+}
+}
+}
+stage('Deploy our image') {
+steps{
+script {
+docker.withRegistry( '', registryCredential ) {
+dockerImage.push()
+}
+}
+}
 }
