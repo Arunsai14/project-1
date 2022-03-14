@@ -15,7 +15,7 @@ pipeline {
         stage('Building our image') { 
             steps { 
                 script { 
-                    sh "docker build -t garunsai14/tomcat:$BUILD_NUMBER ." 
+                    sh "sudo docker build -t garunsai14/tomcat:$BUILD_NUMBER ." 
                 }
 
             } 
