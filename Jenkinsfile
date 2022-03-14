@@ -15,7 +15,7 @@ pipeline {
         stage('Building our image') { 
             steps { 
                 script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    sh "docker build -t garunsai14/tomcat:$BUILD_NUMBER" 
                 }
 
             } 
