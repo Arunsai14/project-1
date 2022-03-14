@@ -1,38 +1,34 @@
-pipeline { 
-
-    environment { 
-        registry = "YourDockerhubAccount/YourRepository" 
-        registryCredential = 'docker-hub' 
-        dockerImage = '' 
-    }
+pipeline {
     agent any 
+    environment {
+    DOCKERHUB_CREDENTIALS = credentials('docker-hub')
+    }
     stages { 
-        stage('Cloning our Git') { 
-            steps { 
-                git 'https://github.com/Arunsai14/project-1.git' 
+        stage('SCM Checkout') {
+            steps{
+            git 'https://github.com/Arunsai14/project-1.git'
             }
-        } 
-        stage('Building our image') { 
-            steps { 
-                script { 
-                    sh "sudo docker build -t garunsai14/tomcat:$BUILD_NUMBER ." 
-                }
-
-            } 
         }
-        stage('Deploy our image') { 
-            steps { 
-                script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
-                    }
-                } 
+
+        stage('Build docker image') {
+            steps {  
+                sh 'docker build -t garunsai14/tomcat:$BUILD_NUMBER .'
             }
-        } 
-        stage('Cleaning up') { 
-            steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
+        }
+        stage('login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
-        } 
+        }
+        stage('push image') {
+            steps{
+                sh 'docker push garunsai14/tomcat:$BUILD_NUMBER'
+            }
+        }
+}
+post {
+        always {
+            sh 'docker logout'
+        }
     }
 }
