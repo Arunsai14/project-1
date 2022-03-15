@@ -9,7 +9,14 @@ pipeline {
             git 'https://github.com/Arunsai14/project-1.git'
             }
         }
+         checkout scm
 
+            def customImage = docker.build("my-image:${env.BUILD_ID}")
+
+            customImage.inside {
+                sh 'make test'
+            }
+        }
         stage('Build docker image') {
             steps {  
                 sh 'docker build -t garunsai14/tomcat:$BUILD_NUMBER .'
