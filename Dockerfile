@@ -14,4 +14,4 @@ FROM tomcat
 
 # On httpd image we need code
 # use COPY directive to copy from host to image
-COPY --from=0 /target/WebAppCal-1.3.5.war  /webapps/
+#COPY --from=0 /target/WebAppCal-1.3.5.war  /webapps/
